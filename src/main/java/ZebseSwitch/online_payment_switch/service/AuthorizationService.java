@@ -1,50 +1,70 @@
 package ZebseSwitch.online_payment_switch.service;
 
+import ZebseSwitch.online_payment_switch.model.Transaction;
+import ZebseSwitch.online_payment_switch.repository.TransactionRepository;
 import ZebseSwitch.online_payment_switch.dto.AuthorizationRequest;
 import ZebseSwitch.online_payment_switch.dto.AuthorizationResponse;
+
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+/*
+ * Never copy and paste code without understanding it.
+ * Always ask: what does this line do and why does it exist?
+ */
 
 @Service
 public class AuthorizationService {
 
+    private final TransactionRepository transactionRepository;
+
+    // Constructor Injection (BEST PRACTICE in Spring)
+    public AuthorizationService(TransactionRepository transactionRepository) {
+        this.transactionRepository = transactionRepository;
+    }
+
     public AuthorizationResponse authorize(AuthorizationRequest request) {
 
-        /*
-         * ============================================================
-         *  STOP ✋
-         *
-         *  Never copy and paste code without understanding it.
-         *
-         *  Ask yourself:
-         *  1. Why does this class exist?
-         *  2. What problem does it solve?
-         *  3. How does it fit into the payment switch?
-         *  4. Could I explain this to another developer?
-         *
-         *  If the answer is NO, don't continue until you understand it.
-         * ============================================================
-         */
+        // STEP 1: Create Transaction entity
+        Transaction txn = new Transaction();
 
-        // Basic validation simulation
-        if (request.getPan() == null || request.getPan().length() < 10) {
-            return new AuthorizationResponse("12", "Invalid Card Number");
+        // Generate internal transaction ID
+        String transactionId = "TXN-" + UUID.randomUUID();
+
+        txn.setTransactionId(transactionId);
+        txn.setPan(request.getPan());
+        txn.setProcessingCode(request.getProcessingCode());
+        txn.setAmount(request.getAmount());
+        txn.setStan(request.getStan());
+        txn.setRrn(request.getRrn());
+        txn.setTransactionTime(LocalDateTime.now());
+
+        // Initial state BEFORE decision
+        txn.setTransactionStatus("PENDING");
+
+        // STEP 2: SAVE FIRST (IMPORTANT - Switch behavior)
+        transactionRepository.save(txn);
+
+        // STEP 3: Business logic (simple demo rule)
+        //AuthorizationResponse response = new AuthorizationResponse();
+
+        if (request.getAmount().doubleValue() <= 1000) {
+            txn.setResponseCode("00");
+            txn.setTransactionStatus("APPROVED");
+        } else {
+            txn.setResponseCode("51");
+            txn.setTransactionStatus("DECLINED");
         }
+        System.out.println(
+                "[DB] Saving Transaction");
+        transactionRepository.save(txn);
 
-        if (request.getAmount() == null || request.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
-            return new AuthorizationResponse("13", "Invalid Amount");
-        }
-
-        // Mock business rule: decline large transactions
-        if (request.getAmount().compareTo(new BigDecimal("10000")) > 0) {
-            return new AuthorizationResponse("05", "Do Not Honor");
-        }
-
-        // Approved flow
         return new AuthorizationResponse(
-                "00",
-                "Approved"
-        );
+                txn.getResponseCode(),
+                txn.getTransactionStatus().equals("APPROVED")
+                        ? "Approved"
+                        : "Insufficient Funds (Simulated)");
     }
 }

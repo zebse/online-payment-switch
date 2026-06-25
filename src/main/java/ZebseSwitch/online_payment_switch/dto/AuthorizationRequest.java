@@ -89,4 +89,24 @@ public class AuthorizationRequest {
     public String getRrn() {
         return rrn;
     }
+
+    public void setPan(String pan) {
+        this.pan = pan;
+    }
+
+    public void setProcessingCode(String processingCode) {
+        this.processingCode = processingCode;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    public void setStan(String stan) {
+        this.stan = stan;
+    }
+
+    public void setRrn(String rrn) {
+        this.rrn = rrn;
+    }
 }
