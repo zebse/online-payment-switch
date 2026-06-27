@@ -57,8 +57,6 @@ public class AuthorizationService {
             txn.setResponseCode("51");
             txn.setTransactionStatus("DECLINED");
         }
-        System.out.println(
-                "[DB] Saving Transaction");
         transactionRepository.save(txn);
 
         return new AuthorizationResponse(

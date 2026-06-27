@@ -19,7 +19,7 @@ public class HandlerRegistry {
     public HandlerRegistry(
             AuthorizationHandler authorizationHandler) {
 
-        handlers.put("0200", authorizationHandler);
+        handlers.put("0200:000000", authorizationHandler);
 
     }
 

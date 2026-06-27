@@ -22,7 +22,7 @@ public class IsoParser {
         IsoMessage isoMessage = new IsoMessage();
 
         String[] tokens = rawMessage.split(";");
-
+        //System.out.println("Received Message = " + rawMessage);
         for (String token : tokens) {
 
             String[] keyValue = token.split("=");

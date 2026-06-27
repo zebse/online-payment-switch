@@ -21,7 +21,6 @@ public class PaymentRouter {
 
         String mti = message.getMti();
         String processingCode = message.getField(3);
-
         IsoMessageHandler handler =
                 handlerRegistry.getHandler(
                         mti,

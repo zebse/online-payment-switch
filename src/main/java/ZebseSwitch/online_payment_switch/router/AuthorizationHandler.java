@@ -26,7 +26,6 @@ public class AuthorizationHandler implements IsoMessageHandler {
 
     @Override
     public IsoMessage handle(IsoMessage message) {
-
         AuthorizationRequest request =
                 IsoMapper.toAuthorizationRequest(message);
 
