@@ -5,6 +5,10 @@ import ZebseSwitch.online_payment_switch.repository.TransactionRepository;
 import ZebseSwitch.online_payment_switch.dto.AuthorizationRequest;
 import ZebseSwitch.online_payment_switch.dto.AuthorizationResponse;
 
+import ZebseSwitch.online_payment_switch.util.MaskingUtil;
+import ZebseSwitch.online_payment_switch.util.TransactionIdGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -24,6 +28,9 @@ public class AuthorizationService {
     public AuthorizationService(TransactionRepository transactionRepository) {
         this.transactionRepository = transactionRepository;
     }
+    private static final Logger logger =
+            LoggerFactory.getLogger(
+                    AuthorizationService.class);
 
     public AuthorizationResponse authorize(AuthorizationRequest request) {
 
@@ -31,7 +38,17 @@ public class AuthorizationService {
         Transaction txn = new Transaction();
 
         // Generate internal transaction ID
-        String transactionId = "TXN-" + UUID.randomUUID();
+        //String transactionId = "TXN-" + UUID.randomUUID();
+        String transactionId = TransactionIdGenerator.generate();
+
+        //Logging ...
+        logger.info(
+                "[{}] Authorization started | PAN={} | Amount={} | STAN={} | RRN={}",
+                transactionId,
+                MaskingUtil.maskPan(request.getPan()),
+                request.getAmount(),
+                request.getStan(),
+                request.getRrn());
 
         txn.setTransactionId(transactionId);
         txn.setPan(request.getPan());
@@ -53,9 +70,15 @@ public class AuthorizationService {
         if (request.getAmount().doubleValue() <= 1000) {
             txn.setResponseCode("00");
             txn.setTransactionStatus("APPROVED");
+            logger.info(
+                    "[{}] Transaction APPROVED | ResponseCode=00",
+                    transactionId);
         } else {
             txn.setResponseCode("51");
             txn.setTransactionStatus("DECLINED");
+            logger.info(
+                    "[{}] Transaction DECLINED | ResponseCode=51",
+                    transactionId);
         }
         transactionRepository.save(txn);
 
@@ -65,4 +88,5 @@ public class AuthorizationService {
                         ? "Approved"
                         : "Insufficient Funds (Simulated)");
     }
+
 }

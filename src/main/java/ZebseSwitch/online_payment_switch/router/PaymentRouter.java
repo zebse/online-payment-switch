@@ -6,7 +6,11 @@ package ZebseSwitch.online_payment_switch.router;
  */
 
 import ZebseSwitch.online_payment_switch.iso8583.IsoMessage;
+import ZebseSwitch.online_payment_switch.service.AuthorizationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
 
 @Component
 public class PaymentRouter {
@@ -16,7 +20,9 @@ public class PaymentRouter {
     public PaymentRouter(HandlerRegistry handlerRegistry) {
         this.handlerRegistry = handlerRegistry;
     }
-
+    private static final Logger logger =
+            LoggerFactory.getLogger(
+                    PaymentRouter.class);
     public IsoMessage route(IsoMessage message) {
 
         String mti = message.getMti();
@@ -35,6 +41,16 @@ public class PaymentRouter {
 
             return errorResponse;
         }
+
+        String routeKey =
+                message.getMti()
+                        + ":"
+                        + message.getField(3);
+
+        logger.info(
+                "Routing ISO Message | RouteKey={} | Handler={}",
+                routeKey,
+                handler.getClass().getSimpleName());
 
         return handler.handle(message);
     }

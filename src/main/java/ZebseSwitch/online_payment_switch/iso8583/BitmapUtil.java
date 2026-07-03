@@ -14,36 +14,41 @@ package ZebseSwitch.online_payment_switch.iso8583;
  * ============================================================
  */
 
+import org.springframework.stereotype.Component;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class BitmapUtil {
-    public static String hexToBinary(String hexBitmap) {
+
+
+    public String hexToBinary(String hex) {
 
         StringBuilder binary = new StringBuilder();
 
-        for (char hexChar : hexBitmap.toCharArray()) {
+        for (char c : hex.toCharArray()) {
 
-            int decimal = Integer.parseInt(String.valueOf(hexChar), 16);
-
-            String fourBits = String.format("%4s",
-                            Integer.toBinaryString(decimal))
-                    .replace(' ', '0');
-
-            binary.append(fourBits);
+            binary.append(
+                    String.format("%4s",
+                                    Integer.toBinaryString(
+                                            Integer.parseInt(
+                                                    String.valueOf(c), 16)))
+                            .replace(' ', '0'));
         }
 
         return binary.toString();
     }
 
-    public static List<Integer> getPresentFields(String binaryBitmap) {
+    public List<Integer> extractFields(String bitmapHex) {
+
+        String binary = hexToBinary(bitmapHex);
 
         List<Integer> fields = new ArrayList<>();
 
-        // Start from index 1 (Bit 2)
-        for (int i = 1; i < binaryBitmap.length(); i++) {
+        for (int i = 1; i < binary.length(); i++) {
 
-            if (binaryBitmap.charAt(i) == '1') {
+            if (binary.charAt(i) == '1') {
 
                 fields.add(i + 1);
 
@@ -53,4 +58,5 @@ public class BitmapUtil {
 
         return fields;
     }
+
 }

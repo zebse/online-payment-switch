@@ -12,10 +12,10 @@ public class IsoPacker {
         builder.append("MTI=")
                 .append(message.getMti());
 
-        Map<Integer, String> sortedFields =
+        TreeMap<Integer, String> ordered =
                 new TreeMap<>(message.getFields());
 
-        for (Map.Entry<Integer, String> entry : sortedFields.entrySet()) {
+        for (Map.Entry<Integer, String> entry : ordered.entrySet()) {
 
             builder.append(";")
                     .append(entry.getKey())

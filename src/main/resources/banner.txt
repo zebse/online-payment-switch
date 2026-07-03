@@ -1,5 +1,5 @@
 =========================================================
-           ONLINE PAYMENT SWITCH -ZebseSwitch
+           ONLINE PAYMENT SWITCH - ZebseSwitch
 =========================================================
 |                                                       |
 |            Developed by Kebede Assefa                 |
