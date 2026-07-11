@@ -1,10 +1,12 @@
 package ZebseSwitch.online_payment_switch.iso8583;
 
+import ZebseSwitch.online_payment_switch.iso8583.exception.IsoParsingException;
 import ZebseSwitch.online_payment_switch.iso8583.fieldreader.*;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 
 /*
  * ============================================================
@@ -21,15 +23,16 @@ public class FieldReader {
     private final Map<FieldType, FieldTypeHandler> handlers =
             new HashMap<>();
 
-    public FieldReader() {
+    public FieldReader(
+            List<FieldTypeHandler> handlerList) {
 
-        handlers.put(
-                FieldType.FIXED,
-                new FixedFieldHandler());
+        for (FieldTypeHandler handler : handlerList) {
 
-        handlers.put(
-                FieldType.LLVAR,
-                new LlvarFieldHandler());
+            handlers.put(
+                    handler.supports(),
+                    handler);
+
+        }
 
     }
 
@@ -44,7 +47,8 @@ public class FieldReader {
         if (handler == null) {
 
             throw new IllegalArgumentException(
-                    "Unsupported Field Type");
+                    "Unsupported Field Type: "
+                            + definition.getFieldType());
 
         }
 
@@ -52,7 +56,6 @@ public class FieldReader {
                 message,
                 position,
                 definition);
-
-    }
+        }
 
 }

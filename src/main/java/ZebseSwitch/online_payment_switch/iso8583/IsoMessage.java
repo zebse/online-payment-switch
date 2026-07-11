@@ -2,12 +2,15 @@ package ZebseSwitch.online_payment_switch.iso8583;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class IsoMessage {
 
     private String mti;
 
-    private final Map<Integer, String> fields = new HashMap<>();
+    //private final Map<Integer, String> fields = new HashMap<>();
+    private final Map<Integer,String> fields =
+            new TreeMap<>();
 
     public String getMti() {
         return mti;

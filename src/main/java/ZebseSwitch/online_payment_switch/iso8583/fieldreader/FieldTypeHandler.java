@@ -1,6 +1,7 @@
 package ZebseSwitch.online_payment_switch.iso8583.fieldreader;
 
 import ZebseSwitch.online_payment_switch.iso8583.FieldDefinition;
+import ZebseSwitch.online_payment_switch.iso8583.FieldType;
 import ZebseSwitch.online_payment_switch.iso8583.ReadResult;
 
 /*
@@ -18,7 +19,7 @@ import ZebseSwitch.online_payment_switch.iso8583.ReadResult;
  */
 
 public interface FieldTypeHandler {
-
+    FieldType supports();
     ReadResult read(
             String message,
             int position,

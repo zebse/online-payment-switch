@@ -4,7 +4,6 @@ import ZebseSwitch.online_payment_switch.dto.AuthorizationRequest;
 import ZebseSwitch.online_payment_switch.dto.AuthorizationResponse;
 import ZebseSwitch.online_payment_switch.iso8583.IsoMapper;
 import ZebseSwitch.online_payment_switch.iso8583.IsoMessage;
-import ZebseSwitch.online_payment_switch.iso8583.IsoParser;
 import ZebseSwitch.online_payment_switch.iso8583.ResponseBuilder;
 import ZebseSwitch.online_payment_switch.service.AuthorizationService;
 
@@ -41,13 +40,13 @@ public class AuthorizationHandler implements IsoMessageHandler {
                 authorizationService.authorize(request);
 
         IsoMessage response =
-                responseBuilder.buildAuthorizationResponse(
+                responseBuilder.buildResponse(
                         message,
+                        "0210",
                         authResponse.getResponseCode());
 
         logger.info(
-                "[ISO0210 built | STAN={} | RC={} | AuthCode={}",
-                //authResponse.getTransactionId(),
+                "[ISO0210 built | STAN={} | RC={} | AuthCode={}]",
                 response.getField(11),
                 response.getField(39),
                 response.getField(38)
